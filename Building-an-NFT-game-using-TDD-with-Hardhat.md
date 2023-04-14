@@ -101,7 +101,7 @@ rm contracts/* test/*
 touch contracts/AvatarArena.sol test/AvatarArena.js
 ```
 
-We'll use the openzepplin [contract wizard](https://docs.openzeppelin.com/contracts/4.x/wizard) to bootstrap our `AvatarArena` contract.
+We'll use the OpenZeppelin [contract wizard](https://docs.openzeppelin.com/contracts/4.x/wizard) to bootstrap our `AvatarArena` contract.
 
 Our contract needs to do a few things:
 
@@ -146,8 +146,16 @@ contract AvatarArena is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
 	constructor() ERC721("AvatarArena", "AVR") {}
 
-	function safeMint(address to, string memory uri) public onlyOwner {
-    	uint256 tokenId = _tokenIdCounter.current();
+	/**
+        * @dev Validation checks are carried out before the NFT is minted
+        * @notice allow users to safemint an AVR NFT
+        * @param to The receiver address of the minted NFT
+        * @param uri The URI pointing to the metadata of the NFT
+    **/
+    function safeMint(address to, string calldata uri) public onlyOwner {
+    	require(to != address(0), "Not a valid address");
+        require(bytes(uri).length > 0, "Empty URI");
+        uint256 tokenId = _tokenIdCounter.current();
     	_tokenIdCounter.increment();
     	_safeMint(to, tokenId);
     	_setTokenURI(tokenId, uri);
