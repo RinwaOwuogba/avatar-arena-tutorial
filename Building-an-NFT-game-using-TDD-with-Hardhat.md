@@ -1,25 +1,25 @@
-# Building an NFT game using TDD with Hardhat
+# Building an NFT Game Using TDD With Hardhat
 
-## Table Of Contents
-- [Building an NFT game using TDD with Hardhat](#building-an-nft-game-using-tdd-with-hardhat)
-	- [Table Of Contents](#table-of-contents)
+## Table of Contents
+- [Building an NFT Game Using TDD With Hardhat](#building-an-nft-game-using-tdd-with-hardhat)
+	- [Table of Contents](#table-of-contents)
 	- [1. Introduction](#1-introduction)
 	- [2. Prerequisites](#2-prerequisites)
 	- [3. Requirements](#3-requirements)
-	- [4. Diving in](#4-diving-in)
-		- [4.1. Project setup](#41-project-setup)
-		- [4.2. Bootstrapping the smart contract](#42-bootstrapping-the-smart-contract)
+	- [4. Diving In](#4-diving-in)
+		- [4.1. Project Setup](#41-project-setup)
+		- [4.2. Bootstrapping the Smart Contract](#42-bootstrapping-the-smart-contract)
 		- [4.3. TDD](#43-tdd)
-		- [4.3.1 - Test 1: should start a pending battle if no pending battle is available](#431---test-1-should-start-a-pending-battle-if-no-pending-battle-is-available)
-		- [4.3.2 - Test 2: should put user in pending battle if available](#432---test-2-should-put-user-in-pending-battle-if-available)
-		- [_Brief intermission_](#brief-intermission)
-		- [4.3.3 - Test 3: should simulate battle results once two users join a battle](#433---test-3-should-simulate-battle-results-once-two-users-join-a-battle)
-		- [4.3.4 - Test 4: should simulate battle results randomly](#434---test-4-should-simulate-battle-results-randomly)
-		- [4.3.5 - Test 5: should fail to start a battle with a token sender does not own](#435---test-5-should-fail-to-start-a-battle-with-a-token-sender-does-not-own)
-		- [4.3.6 - Test 6: should fail to start another battle while in a pending battle](#436---test-6-should-fail-to-start-another-battle-while-in-a-pending-battle)
-		- [4.4. Contract deployment](#44-contract-deployment)
+		- [4.3.1 - Test 1: Should Start a Pending Battle if No Pending Battle Is Available](#431---test-1-should-start-a-pending-battle-if-no-pending-battle-is-available)
+		- [4.3.2 - Test 2: Should Put User in Pending Battle if Available](#432---test-2-should-put-user-in-pending-battle-if-available)
+		- [_Brief Intermission_](#brief-intermission)
+		- [4.3.3 - Test 3: Should Simulate Battle Results Once Two Users Join a Battle](#433---test-3-should-simulate-battle-results-once-two-users-join-a-battle)
+		- [4.3.4 - Test 4: Should Simulate Battle Results Randomly](#434---test-4-should-simulate-battle-results-randomly)
+		- [4.3.5 - Test 5: Should Fail to Start a Battle With a Token Sender Does Not Own](#435---test-5-should-fail-to-start-a-battle-with-a-token-sender-does-not-own)
+		- [4.3.6 - Test 6: Should Fail to Start Another Battle While in a Pending Battle](#436---test-6-should-fail-to-start-another-battle-while-in-a-pending-battle)
+		- [4.4. Contract Deployment](#44-contract-deployment)
 		- [4.5. Frontend: Setup](#45-frontend-setup)
-		- [4.6. Frontend: Laying Bricks - Building components](#46-frontend-laying-bricks---building-components)
+		- [4.6. Frontend: Laying Bricks - Building Components](#46-frontend-laying-bricks---building-components)
 		- [4.6.1 - Utilities](#461---utilities)
 		- [4.6.2 - Contracts](#462---contracts)
 		- [4.6.3 - Hooks](#463---hooks)
@@ -27,12 +27,12 @@
 		- [4.6.5 - Routes](#465---routes)
 	- [5. Conclusion](#5-conclusion)
 	- [6. Next Steps](#6-next-steps)
-	- [7. About the author](#7-about-the-author)
+	- [7. About the Author](#7-about-the-author)
 	- [8. References](#8-references)
 
 ## 1. Introduction
 
-Security is critical when building blockchain applications, a simple mistake could lead to the loss of millions of dollars. TDD (Test Driven Development) is an approach that can help us catch errors early. We'll explore the wonderful world of TDD by building an NFT game using Hardhat's development environment, deploying it on the Celo blockchain and finally creating a frontend to interact with it. Let's go!
+Security is critical when building blockchain applications, a simple mistake could lead to the loss of millions of dollars. TDD (Test Driven Development) is an approach that can help us catch errors early. We'll explore the wonderful world of TDD by building an NFT game using Hardhat's development environment, deploying it on the Celo blockchain, and finally creating a front-end to interact with it. Let's go!
 
 ## 2. Prerequisites
 
@@ -50,9 +50,9 @@ Make sure to have the following installed:
 - [Node js v16.20.0](https://nodejs.org/en/download/package-manager)
 - [yarn 1.22.19+](https://classic.yarnpkg.com/lang/en/docs/install/#debian-stable)
 
-## 4. Diving in
+## 4. Diving In
 
-### 4.1. Project setup
+### 4.1. Project Setup
 
 Let's create a folder for the project, we'll call it `avatar-arena`.
 
@@ -64,7 +64,13 @@ yarn add --dev hardhat
 yarn add dotenv
 ```
 
-Next, we set up the hardhat project by running `npx hardhat`. This brings up a menu that configures the hardhat boilerplate, we'll choose the default option for all the questions ie
+Next, we set up the hardhat project by running: 
+
+```bash
+npx hardhat
+```
+
+This brings up a menu that configures the hardhat boilerplate, we'll choose the default option for all the questions i.e
 
 ```
 ✔ What do you want to do? · Create a JavaScript project
@@ -76,7 +82,7 @@ Next, we set up the hardhat project by running `npx hardhat`. This brings up a m
 
 Great!
 
-The last configuration we need is in `package.json`. We need to add a handy script:
+The last configuration we need is in the `package.json` file. We need to add a handy script:
 
 ```json
 // package.json
@@ -86,7 +92,7 @@ The last configuration we need is in `package.json`. We need to add a handy scri
 },
 ```
 
-### 4.2. Bootstrapping the smart contract
+### 4.2. Bootstrapping the Smart Contract
 
 Remove the boilerplate contract files and add the new contract files
 
@@ -267,7 +273,7 @@ Now, let's think a bit before writing code, users might not want to battle at th
 
 Starting with the tests:
 
-### 4.3.1 - Test 1: should start a pending battle if no pending battle is available
+### 4.3.1 - Test 1: Should Start a Pending Battle if No Pending Battle Is Available
 
 ```js
 // test/AvatarArena.js
@@ -642,7 +648,7 @@ We now make sure to initialize a battle by adding a player when it is started. W
 
 Re-run the test, it should pass now.
 
-### 4.3.2 - Test 2: should put user in pending battle if available
+### 4.3.2 - Test 2: Should Put User in Pending Battle if Available
 
 ```js
 // test/AvatarArena.js
@@ -748,7 +754,7 @@ In the test, we expect the first player in the battle that `acc1` is involved in
 
 Re-run your tests, they should pass now
 
-### _Brief intermission_
+### _Brief Intermission_
 
 A significant part of the TDD process is refactoring, your code isn't all that useful if it is difficult to maintain/understand. We need to examine what we've written and see if there's an opportunity to abstract or extract repetitive logic into some reusable component.
 
@@ -832,7 +838,7 @@ Update the test cases:
 
 Re-run tests just to make sure everything still works. They should work as normal, if an error comes up then something broke while substituting the code snippets, try to figure out what's out of place and resolve it before continuing.
 
-### 4.3.3 - Test 3: should simulate battle results once two users join a battle
+### 4.3.3 - Test 3: Should Simulate Battle Results Once Two Users Join a Battle
 
 Simulating the result of a battle involves:
 
@@ -1216,7 +1222,7 @@ Re-run the tests, they should pass now.
 
 The test passes now and we get a winner but it's the same every time, that's not very useful. A good game should present all parties involved with a reasonable chance of success. There are some ways we could do that but I choose the easy path, choosing winners randomly! That brings us to the new test case.
 
-### 4.3.4 - Test 4: should simulate battle results randomly
+### 4.3.4 - Test 4: Should Simulate Battle Results Randomly
 
 ```js
 // test/AvatarArena.js
@@ -1339,7 +1345,7 @@ Re-run the tests, they should pass now.
 
 Now that the happy scenarios have been tested, let's look at some undesirable scenarios:
 
-### 4.3.5 - Test 5: should fail to start a battle with a token sender does not own
+### 4.3.5 - Test 5: Should Fail to Start a Battle With a Token Sender Does Not Own
 
 We want to make sure that whoever starts a battle with an avatar owns that avatar.
 
@@ -1417,7 +1423,7 @@ Let's make sure the contract reverts as expected:
 
 Re-run the tests, they should pass now.
 
-### 4.3.6 - Test 6: should fail to start another battle while in a pending battle
+### 4.3.6 - Test 6: Should Fail to Start Another Battle While in a Pending Battle
 
 Only one battle can happen at a time so if a user can start another battle while in the middle of a pending battle, we run the risk of a user battling themselves.
 
@@ -1567,7 +1573,7 @@ contract AvatarArena is ERC721Enumerable, ERC721URIStorage, Ownable, Arena {
 
 The tests should still pass, re-run them to be sure.
 
-### 4.4. Contract deployment
+### 4.4. Contract Deployment
 
 We're almost there, to deploy our smart contract to the Celo blockchain programmatically, we need to get the secret recovery phrase for our account from Metamask. This is used in generating our private key which is in turn used in signing transactions on the blockchain. (Therefore it goes without saying that you should keep the recovery phrase hidden and _not_ push it to GitHub)
 
@@ -1932,7 +1938,7 @@ Also, let's not forget to [get the font from google](https://fonts.google.com/sp
 ...
 ```
 
-### 4.6. Frontend: Laying Bricks - Building components
+### 4.6. Frontend: Laying Bricks - Building Components
 
 Apologies friends, we won't be using the TDD approach here. The TDD focus was in building the contract, the goal here is to get a nice interface to interact with the contract. Now, I already went through the trouble of hitting my head while figuring things out so we now have the luxury of going through each piece of the frontend as we assemble them, I'll do my best to explain what's going on in each component and we'll keep things moving. Si?
 
@@ -3601,7 +3607,7 @@ Check out a deployed version of the webapp [here!](https://avatar-arena.netlify.
 
 If you enjoyed this, there's so much you can do; you could add more functionality to both the smart contract and the frontend still following the TDD process, deploy your own version to the CELO mainnet, explore other testing environments, you could even try adding test to some public contract code to beef up your understanding of both the contracts and the TDD process.
 
-## 7. About the author
+## 7. About the Author
 
 Bolarinwa Owuogba is a software engineer and a student of the University of Lagos, Nigeria. You'll find him [here on twitter](www.twitter.com/__rinwa), feel free to say hi.
 
