@@ -1,5 +1,35 @@
 # Building an NFT game using TDD with Hardhat
 
+## Table Of Contents
+- [Building an NFT game using TDD with Hardhat](#building-an-nft-game-using-tdd-with-hardhat)
+	- [Table Of Contents](#table-of-contents)
+	- [1. Introduction](#1-introduction)
+	- [2. Prerequisites](#2-prerequisites)
+	- [3. Requirements](#3-requirements)
+	- [4. Diving in](#4-diving-in)
+		- [4.1. Project setup](#41-project-setup)
+		- [4.2. Bootstrapping the smart contract](#42-bootstrapping-the-smart-contract)
+		- [4.3. TDD](#43-tdd)
+		- [4.3.1 - Test 1: should start a pending battle if no pending battle is available](#431---test-1-should-start-a-pending-battle-if-no-pending-battle-is-available)
+		- [4.3.2 - Test 2: should put user in pending battle if available](#432---test-2-should-put-user-in-pending-battle-if-available)
+		- [_Brief intermission_](#brief-intermission)
+		- [4.3.3 - Test 3: should simulate battle results once two users join a battle](#433---test-3-should-simulate-battle-results-once-two-users-join-a-battle)
+		- [4.3.4 - Test 4: should simulate battle results randomly](#434---test-4-should-simulate-battle-results-randomly)
+		- [4.3.5 - Test 5: should fail to start a battle with a token sender does not own](#435---test-5-should-fail-to-start-a-battle-with-a-token-sender-does-not-own)
+		- [4.3.6 - Test 6: should fail to start another battle while in a pending battle](#436---test-6-should-fail-to-start-another-battle-while-in-a-pending-battle)
+		- [4.4. Contract deployment](#44-contract-deployment)
+		- [4.5. Frontend: Setup](#45-frontend-setup)
+		- [4.6. Frontend: Laying Bricks - Building components](#46-frontend-laying-bricks---building-components)
+		- [4.6.1 - Utilities](#461---utilities)
+		- [4.6.2 - Contracts](#462---contracts)
+		- [4.6.3 - Hooks](#463---hooks)
+		- [4.6.4 - Components](#464---components)
+		- [4.6.5 - Routes](#465---routes)
+	- [5. Conclusion](#5-conclusion)
+	- [6. Next Steps](#6-next-steps)
+	- [7. About the author](#7-about-the-author)
+	- [8. References](#8-references)
+
 ## 1. Introduction
 
 Security is critical when building blockchain applications, a simple mistake could lead to the loss of millions of dollars. TDD (Test Driven Development) is an approach that can help us catch errors early. We'll explore the wonderful world of TDD by building an NFT game using Hardhat's development environment, deploying it on the Celo blockchain and finally creating a frontend to interact with it. Let's go!
