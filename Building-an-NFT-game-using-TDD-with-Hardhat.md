@@ -104,50 +104,67 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract AvatarArena is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
-	using Counters for Counters.Counter;
+    using Counters for Counters.Counter;
 
-	Counters.Counter private _tokenIdCounter;
+    Counters.Counter private _tokenIdCounter;
 
-	constructor() ERC721("AvatarArena", "AVR") {}
+    string private _name;
+    string private _symbol;
 
-	function safeMint(address to, string memory uri) public onlyOwner {
-    	uint256 tokenId = _tokenIdCounter.current();
-    	_tokenIdCounter.increment();
-    	_safeMint(to, tokenId);
-    	_setTokenURI(tokenId, uri);
-	}
+    constructor(string memory name_, string memory symbol_) ERC721(name_, symbol_) {
+        _name = name_;
+        _symbol = symbol_;
+    }
 
-	// The following functions are overrides required by Solidity.
+    function safeMint(address to, string memory uri) public onlyOwner returns (uint256) {
+        require(bytes(uri).length > 0, "AvatarArena: URI must not be empty");
+        uint256 tokenId = _tokenIdCounter.current();
+        _tokenIdCounter.increment();
+        _safeMint(to, tokenId);
+        _setTokenURI(tokenId, uri);
+        return tokenId;
+    }
 
-	function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
-    	internal
-    	override(ERC721, ERC721Enumerable)
-	{
-    	super._beforeTokenTransfer(from, to, tokenId, batchSize);
-	}
+    // The following functions are overrides required by Solidity.
 
-	function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
-    	super._burn(tokenId);
-	}
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
 
-	function tokenURI(uint256 tokenId)
-    	public
-    	view
-    	override(ERC721, ERC721URIStorage)
-    	returns (string memory)
-	{
-    	return super.tokenURI(tokenId);
-	}
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+        super._burn(tokenId);
+    }
 
-	function supportsInterface(bytes4 interfaceId)
-    	public
-    	view
-    	override(ERC721, ERC721Enumerable)
-    	returns (bool)
-	{
-    	return super.supportsInterface(interfaceId);
-	}
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function name() public view returns (string memory) {
+        return _name;
+    }
+
+    function symbol() public view returns (string memory) {
+        return _symbol;
+    }
 }
+
 ```
 
 We'll update the code to remove the `onlyOwner` modifier. It prevents anybody who's not the owner of the contract mint tokens but we don't want that restriction in our game. In our game, any user can mint a token. The updated snippet becomes:
