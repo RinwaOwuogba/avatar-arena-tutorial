@@ -94,7 +94,7 @@ abstract contract Arena is ERC721 {
     }
 
 function _createNewBattle(uint256 tokenId) internal {
-    Battle storage newBattle = _battles.push(Battle());
+    Battle storage newBattle = _battles.push();
 
     newBattle.players.push(Player(msg.sender, tokenId));
     newBattle.createdAt = block.timestamp;
