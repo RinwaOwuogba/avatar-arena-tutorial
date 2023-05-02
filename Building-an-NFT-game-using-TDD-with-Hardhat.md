@@ -1,18 +1,18 @@
-# Building an NFT game using TDD with Hardhat
+# Building an NFT game using TDD with Hardhat-
 
-## 1. Introduction
+## 1. Introduction:
 
-Security is critical when building blockchain applications, a simple mistake could lead to the loss of millions of dollars. TDD (Test Driven Development) is an approach that can help us catch errors early. We'll explore the wonderful world of TDD by building an NFT game using Hardhat's development environment, deploying it on the Celo blockchain and finally creating a frontend to interact with it. Let's go!
+Security is crucial for building blockchain applications, a simple mistake could lead to the loss of millions of dollars. TDD (Test Driven Development) is an approach that can help us catch errors early. We'll explore the wonderful world of TDD by building an NFT game using Hardhat's development environment, deploying it on the Celo blockchain and finally creating a frontend to interact with it. Let's go!
 
-## 2. Prerequisites
+## 2. Prerequisites:
 
-To follow along with this tutorial, you need to have an understanding of:
+To follow along with this tutorial, understanding of the following is required:
 
 - [JavaScript](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/JavaScript_basics)
 - [React](https://react.dev/)
 - [EVM Smart contracts](https://ethereum.org/en/developers/docs/smart-contracts/)
 
-## 3. Requirements
+## 3. Requirements:
 
 Make sure to have the following installed:
 
@@ -20,21 +20,31 @@ Make sure to have the following installed:
 - [Node js v16.20.0](https://nodejs.org/en/download/package-manager)
 - [yarn 1.22.19+](https://classic.yarnpkg.com/lang/en/docs/install/#debian-stable)
 
-## 4. Diving in
+## 4. Diving in:
 
 ### 4.1. Project setup
 
 Let's create a folder for the project, we'll call it `avatar-arena`.
 
 ```
+# Create a directory for the project
 mkdir avatar-arena
+
+# Change directory to the project folder
 cd avatar-arena
+
+# Initialize a new yarn project with default settings
 yarn init -y
+
+# Add Hardhat as a development dependency
 yarn add --dev hardhat
+
+# Add dotenv package for handling environment variables
 yarn add dotenv
+
 ```
 
-Next, we set up the hardhat project by running `npx hardhat`. This brings up a menu that configures the hardhat boilerplate, we'll choose the default option for all the questions ie
+Next, we set up the hardhat project by running `npx hardhat`. This brings up a menu that configures the hardhat boilerplate, we'll choose the default option for all the questions ie. as follows:
 
 ```
 ✔ What do you want to do? · Create a JavaScript project
@@ -52,13 +62,14 @@ The last configuration we need is in `package.json`. We need to add a handy scri
 // package.json
 
 "scripts": {
-    "test": "hardhat test"
+    "test": "hardhat test" // Defines a script named "test" that runs the "hardhat test" command
 },
+
 ```
 
-### 4.2. Bootstrapping the smart contract
+### 4.2. Bootstrapping the smart contract:
 
-Remove the boilerplate contract files and add the new contract files
+Remove the boilerplate contract files and add the new contract files-
 
 ```
 rm contracts/* test/*
@@ -74,7 +85,7 @@ Our contract needs to do a few things:
 - ownable tokens
 - URI storage
 
-We will choose ERC 721 as our token type (the standard for smart contracts that mint NFT tokens) template with the following configurations:
+We will choose **ERC 721** (is a standard for non-fungible tokens (NFTs) on the Ethereum blockchain, defining a set of rules for creating, managing, and transferring unique digital assets. It enables the creation of digital assets that are indivisible, verifiable, and can represent ownership of digital or physical items) as our token type (the standard for smart contracts that mint NFT tokens) template with the following configurations:
 
 - Settings:
   - name: AvatarArena
@@ -87,7 +98,7 @@ We will choose ERC 721 as our token type (the standard for smart contracts that 
   - security contact (optional)
   - license: MIT (optional)
 
-This config gives us the basic template for the smart contract we'll be building. It includes features such as enumerating the NFTs minted by the contract as well as storing URIs associated with each token.
+This configuration will give us the basic template for the smart contract we'll be building. It includes features such as enumerating the NFTs minted by the contract as well as storing URIs associated with each token.
 
 When you're done, you'll have this block of code on the editor to your right, we'll copy and paste it into `contracts/AvatarArena.sol`:
 
@@ -97,24 +108,24 @@ When you're done, you'll have this block of code on the editor to your right, we
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol"; // Import the ERC721 base contract
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol"; // Import the ERC721Enumerable extension
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol"; // Import the ERC721URIStorage extension
+import "@openzeppelin/contracts/access/Ownable.sol"; // Import the Ownable contract
+import "@openzeppelin/contracts/utils/Counters.sol"; // Import the Counters library
 
 contract AvatarArena is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 	using Counters for Counters.Counter;
 
-	Counters.Counter private _tokenIdCounter;
+	Counters.Counter private _tokenIdCounter; // Counter for token IDs
 
-	constructor() ERC721("AvatarArena", "AVR") {}
+	constructor() ERC721("AvatarArena", "AVR") {} // Constructor for the contract, sets the name and symbol for the ERC721 token
 
 	function safeMint(address to, string memory uri) public onlyOwner {
-    	uint256 tokenId = _tokenIdCounter.current();
-    	_tokenIdCounter.increment();
-    	_safeMint(to, tokenId);
-    	_setTokenURI(tokenId, uri);
+    	uint256 tokenId = _tokenIdCounter.current(); // Get the current token ID
+    	_tokenIdCounter.increment(); // Increment the token ID counter
+    	_safeMint(to, tokenId); // Mint a new token to the specified address
+    	_setTokenURI(tokenId, uri); // Set the token URI for the minted token
 	}
 
 	// The following functions are overrides required by Solidity.
@@ -123,11 +134,11 @@ contract AvatarArena is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     	internal
     	override(ERC721, ERC721Enumerable)
 	{
-    	super._beforeTokenTransfer(from, to, tokenId, batchSize);
+    	super._beforeTokenTransfer(from, to, tokenId, batchSize); // Call the parent contract's _beforeTokenTransfer function
 	}
 
 	function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
-    	super._burn(tokenId);
+    	super._burn(tokenId); // Call the parent contract's _burn function
 	}
 
 	function tokenURI(uint256 tokenId)
@@ -136,7 +147,7 @@ contract AvatarArena is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     	override(ERC721, ERC721URIStorage)
     	returns (string memory)
 	{
-    	return super.tokenURI(tokenId);
+    	return super.tokenURI(tokenId); // Call the parent contract's tokenURI function
 	}
 
 	function supportsInterface(bytes4 interfaceId)
@@ -145,12 +156,13 @@ contract AvatarArena is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     	override(ERC721, ERC721Enumerable)
     	returns (bool)
 	{
-    	return super.supportsInterface(interfaceId);
+    	return super.supportsInterface(interfaceId); // Call the parent contract's supportsInterface function
 	}
 }
+
 ```
 
-We'll update the code to remove the `onlyOwner` modifier. It prevents anybody who's not the owner of the contract mint tokens but we don't want that restriction in our game. In our game, any user can mint a token. The updated snippet becomes:
+We'll update the code to remove the `onlyOwner` modifier. It prevents anyone who's not the owner of the contract mint tokens but we don't want that restriction in our game. In our game, any user can mint a token. The updated snippet becomes:
 
 ```
 ...
@@ -190,7 +202,7 @@ The Arena contract has to allow us to do a few things:
 
 _Note: Subsequently, when we use `avatar`, we're referring to a minted NFT._
 
-### 4.3. TDD
+### 4.3. TDD:
 
 The TDD approach simplified = _Write failing test for expected behaviour -> Run the test (which fails) -> Fix the failing test -> Repeat_
 
@@ -198,6 +210,7 @@ Let's setup the test file `test/AvatarArena.js`:
 
 ```
 // test/AvatarArena.js
+
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
@@ -210,12 +223,17 @@ describe("AvatarArena", function () {
   let acc2;
 
   this.beforeEach(async function () {
-	const AvatarArena = await ethers.getContractFactory("AvatarArena");
-	[owner, acc1, acc2] = await ethers.getSigners();
+    // Get the contract factory for AvatarArena
+    const AvatarArena = await ethers.getContractFactory("AvatarArena");
 
-	avatarArena = await AvatarArena.deploy();
+    // Get the signers (accounts) from ethers
+    [owner, acc1, acc2] = await ethers.getSigners();
+
+    // Deploy the AvatarArena contract
+    avatarArena = await AvatarArena.deploy();
   });
 });
+
 ```
 
 What's happening here?
@@ -226,7 +244,7 @@ What's happening here?
 
 To the tests!
 
-Although, we'll only be writing tests for `startBattle`, it'll cover all of our tests since the tests will be more integration-focused due to the difficulty in mocking solidity contract code from JavaScript. Sadly we're restricted to using JavaScript when testing with Hardhat, a friend suggested I check out [Foundry](https://github.com/foundry-rs/foundry) as a test environment, I'll try that out at a later date and drop an update on how it goes.
+Although, we'll only be writing tests for `startBattle`, it'll cover all of our tests since the tests will be more integration-focused due to the difficulty in mocking solidity contract code from JavaScript. 
 
 _Note: Throughout the TDD process for the contract code, there will be code snippets which have "..." starting or ending them. I use that to indicate that some code has been omitted to keep the snippets short. Where necessary, I'll start and end the snippets with already existing lines in the specified file so you know where the snippet fits in, Thank you._
 
@@ -234,41 +252,52 @@ Now, let's think a bit before writing code, users might not want to battle at th
 
 Starting with the tests:
 
-### 4.3.1 - Test 1: should start a pending battle if no pending battle is available
+### 4.3.1 - Test 1: should start a pending battle if no pending battle is available:
 
 ```
 // test/AvatarArena.js
-...
+
 const { ethers } = require("hardhat");
 
 const DEFAULT_TOKEN_URI = "https://example.com/1.png";
 
 describe("AvatarArena", function () {
-...
+  // Timeout for tests
+  this.timeout(50000);
 
-...
+  // Variables for the contract instance and accounts
+  let avatarArena;
+  let owner;
+  let acc1;
+  let acc2;
+
   this.beforeEach(async function () {
-	const AvatarArena = await ethers.getContractFactory("AvatarArena");
-	[owner, acc1, acc2] = await ethers.getSigners();
+    // Get the contract factory for AvatarArena
+    const AvatarArena = await ethers.getContractFactory("AvatarArena");
 
-	avatarArena = await AvatarArena.deploy();
+    // Get the signers (accounts) from ethers
+    [owner, acc1, acc2] = await ethers.getSigners();
+
+    // Deploy the AvatarArena contract
+    avatarArena = await AvatarArena.deploy();
   });
 
   describe("startBattle", function () {
-	it("should start a pending battle if no pending battle is available", async function () {
-  	// mint NFT to battle with
-  	const trx1 = await avatarArena
-    	.connect(owner)
-    	.safeMint(owner.address, DEFAULT_TOKEN_URI);
-  	trx1.wait();
+    it("should start a pending battle if no pending battle is available", async function () {
+      // Mint NFT to battle with
+      const trx1 = await avatarArena
+        .connect(owner)
+        .safeMint(owner.address, DEFAULT_TOKEN_URI);
+      await trx1.wait();
 
-  	// start battle
-  	const tokenID = 0;
-  	const trx = await avatarArena.connect(owner).startBattle(tokenID);
-  	await trx.wait();
-	});
+      // Start battle
+      const tokenID = 0;
+      const trx = await avatarArena.connect(owner).startBattle(tokenID);
+      await trx.wait();
+    });
   });
 });
+
 ```
 
 We mint a token as the `owner` signer and try starting a battle with it.
@@ -335,23 +364,30 @@ We need to make sure a battle is in fact created so we test the data stored on a
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { BigNumber } = require("ethers");
-...
 
-...
-  	// start battle
-  	const tokenID = 0;
-  	const trx = await avatarArena.connect(owner).startBattle(tokenID);
-  	await trx.wait();
+describe("AvatarArena", function () {
+  // ...
 
-  	const battle = await avatarArena.connect(owner).getLatestBattle();
-  	expect(battle.players[0].player).to.eql(owner.address);
-  	expect(battle.players[0].nft).to.eq(BigNumber.from(tokenID));
+  describe("startBattle", function () {
+    it("should start a pending battle if no pending battle is available", async function () {
+      // Start battle
+      const tokenID = 0;
+      const trx = await avatarArena.connect(owner).startBattle(tokenID);
+      await trx.wait();
 
-  	// no winner should exist until game is completed
-  	expect(battle.winner).to.eq(-1);
-	});
+      // Get the latest battle from the contract
+      const battle = await avatarArena.connect(owner).getLatestBattle();
+
+      // Assert that the player and NFT in the battle are as expected
+      expect(battle.players[0].player).to.eql(owner.address);
+      expect(battle.players[0].nft).to.eq(BigNumber.from(tokenID));
+
+      // Assert that no winner exists until the game is completed
+      expect(battle.winner).to.eq(-1);
+    });
   });
 });
+
 ```
 
 From the updated test above, you can tell that:
@@ -472,7 +508,7 @@ abstract contract Arena is ERC721 {
 ...
 ```
 
-Note the subtle difference in data types between nft index - `uint256` in `Player` and `winner` index - `int256` in `Battle`. Winner has to be int256 since it needs to contain negative values on initialization which is only possible with signed integers. We also need to return something from `getLatestBattle`:
+Note: The subtle difference in data types between nft index - `uint256` in `Player` and `winner` index - `int256` in `Battle`. Winner has to be int256 since it needs to contain negative values on initialization which is only possible with signed integers. We also need to return something from `getLatestBattle`:
 
 ```
 // contracts/AvatarArena.sol
@@ -612,7 +648,7 @@ We now make sure to initialize a battle by adding a player when it is started. W
 
 Re-run the test, it should pass now.
 
-### 4.3.2 - Test 2: should put user in pending battle if available
+### 4.3.2 - Test 2: should put user in pending battle if available:
 
 ```
 // test/AvatarArena.js
@@ -653,7 +689,7 @@ Re-run the test, it should pass now.
 });
 ```
 
-Run the tests
+Run the tests:
 
 ```
 $ yarn test
@@ -716,7 +752,7 @@ In the test, we expect the first player in the battle that `acc1` is involved in
 ...
 ```
 
-Re-run your tests, they should pass now
+Re-run your tests, they should pass now.
 
 ### _Brief intermission_
 
@@ -749,7 +785,7 @@ const newAvatarArenaUtils = (contractInstance) => {
 };
 ```
 
-The goal here is to reduce the overhead when calling these methods so we can focus on the logic of what we're testing. this removes the verbosity of waiting for these transactions and specifying the contract instance every time we're using either of these methods.
+The goal here is to reduce the overhead when calling these methods so we can focus on the logic of what we're testing. This removes the verbosity of waiting for these transactions and specifying the contract instance every time we're using either of these methods.
 
 Now to use the reusable component, update the test setup:
 
@@ -802,7 +838,7 @@ Update the test cases:
 
 Re-run tests just to make sure everything still works. They should work as normal, if an error comes up then something broke while substituting the code snippets, try to figure out what's out of place and resolve it before continuing.
 
-### 4.3.3 - Test 3: should simulate battle results once two users join a battle
+### 4.3.3 - Test 3: should simulate battle results once two users join a battle:
 
 Simulating the result of a battle involves:
 
@@ -900,7 +936,7 @@ contract AvatarArena is ERC721Enumerable, ERC721URIStorage, Ownable, Arena {
 ...
 ```
 
-Re-run the tests
+Re-run the tests:
 
 ```
 $ yarn test
@@ -1149,7 +1185,7 @@ Compiled 1 Solidity file successfully
   	at processTimers (node:internal/timers:507:7)
 ```
 
-Okay, we're seeing a similar error but on a different line in the test condition. This could be a pointer that we need to think through the condition required to make the test pass, the test code expects the `getAvatarWins` function to return `0` when an avatar hasn't won a battle and expects that value to be incremented whenever an avatar wins a battle.
+Okay, we're getting a similar error but on a different line in the test condition. This could be a pointer that we need to think through the condition required to make the test pass, the test code expects the `getAvatarWins` function to return `0` when an avatar hasn't won a battle and expects that value to be incremented whenever an avatar wins a battle.
 
 Let's address the problem:
 
@@ -1190,58 +1226,71 @@ Re-run the tests, they should pass now.
 
 The test passes now and we get a winner but it's the same every time, that's not very useful. A good game should present all parties involved with a reasonable chance of success. There are some ways we could do that but I choose the easy path, choosing winners randomly! That brings us to the new test case.
 
-### 4.3.4 - Test 4: should simulate battle results randomly
+### 4.3.4 - Test 4: should simulate battle results randomly:
 
 ```
 // test/AvatarArena.js
 
 ...
-    	await avatarArena.connect(owner).getAvatarWins(winningNftId)
-  	).to.eq(1);
-	});
 
-	it("should simulate battle results randomly", async function () {
-  	await aaUtils.mintNFT(owner, owner.address);
-  	await aaUtils.mintNFT(acc1, acc1.address);
+// Test case 1: Check if getAvatarWins function returns correct value
+it("should return correct number of avatar wins", async function () {
+  await aaUtils.mintNFT(owner, owner.address); // Mint NFT for owner
+  const winningNftId = 0; // Set winning NFT ID
 
-  	const tokenID_1 = 0;
-  	const tokenID_2 = 1;
-
-  	let winnerIndexOld;
-  	let winnerIndexNew;
-  	let runs = 0;
-  	const maxRuns = 10;
-
-  	while (
-    	(!winnerIndexOld && !winnerIndexNew) ||
-    	winnerIndexOld.eq(winnerIndexNew)
-  	) {
-    	await aaUtils.startBattle(owner, tokenID_1);
-    	await aaUtils.startBattle(acc1, tokenID_2);
-
-    	const battle = await avatarArena.connect(acc1).getLatestBattle();
-
-    	if (runs === 0) {
-      	winnerIndexOld = battle.winner;
-      	winnerIndexNew = battle.winner;
-    	} else {
-      	winnerIndexOld = winnerIndexNew;
-      	winnerIndexNew = battle.winner;
-    	}
-
-    	++runs;
-
-    	expect(runs).lt(
-      	maxRuns,
-      	`Contract failed to generate different results within ${maxRuns} calls`
-    	);
-  	}
-	});
-  });
+  // Call getAvatarWins function and expect it to return 1
+  expect(
+    await avatarArena.connect(owner).getAvatarWins(winningNftId)
+  ).to.eq(1);
 });
 
-const newAvatarArenaUtils = (contractInstance) => {
+// Test case 2: Simulate battle results randomly
+it("should simulate battle results randomly", async function () {
+  await aaUtils.mintNFT(owner, owner.address); // Mint NFT for owner
+  await aaUtils.mintNFT(acc1, acc1.address); // Mint NFT for acc1
+
+  const tokenID_1 = 0; // Set token ID for owner's NFT
+  const tokenID_2 = 1; // Set token ID for acc1's NFT
+
+  let winnerIndexOld;
+  let winnerIndexNew;
+  let runs = 0;
+  const maxRuns = 10;
+
+  // Loop until different winner is generated or max runs is reached
+  while (
+    (!winnerIndexOld && !winnerIndexNew) ||
+    winnerIndexOld.eq(winnerIndexNew)
+  ) {
+    await aaUtils.startBattle(owner, tokenID_1); // Start battle for owner's NFT
+    await aaUtils.startBattle(acc1, tokenID_2); // Start battle for acc1's NFT
+
+    const battle = await avatarArena.connect(acc1).getLatestBattle(); // Get latest battle details
+
+    if (runs === 0) {
+      winnerIndexOld = battle.winner;
+      winnerIndexNew = battle.winner;
+    } else {
+      winnerIndexOld = winnerIndexNew;
+      winnerIndexNew = battle.winner;
+    }
+
+    ++runs;
+
+    expect(runs).lt(
+      maxRuns,
+      `Contract failed to generate different results within ${maxRuns} calls`
+    );
+  }
+});
+
 ...
+
+// Utility function to create a new instance of AvatarArenaUtils
+const newAvatarArenaUtils = (contractInstance) => {
+  ...
+};
+
 ```
 
 Testing randomness here is tricky, you want to be sure that within a range of runs, the value being generated changes. The problem is, that range could also change, how? well, it might produce a different value every two calls sometimes every single call, point is - _it's a fragile test_.
@@ -1298,7 +1347,7 @@ Let's add the logic for randomness in battle simulation:
 ...
 ```
 
-What's happening? five things:
+There are 5 things happening right now!!-
 
 1. `uint256()`: here we cast the data to uint256 because that's the data type used in indexing the array of battle players.
 2. `keccak256`: used for computing the Keccak-256 hash of the data input
@@ -1313,7 +1362,7 @@ Re-run the tests, they should pass now.
 
 Now that the happy scenarios have been tested, let's look at some undesirable scenarios:
 
-### 4.3.5 - Test 5: should fail to start a battle with a token sender does not own
+### 4.3.5 - Test 5: should fail to start a battle with a token sender does not own:
 
 We want to make sure that whoever starts a battle with an avatar owns that avatar.
 
@@ -1391,7 +1440,7 @@ Let's make sure the contract reverts as expected:
 
 Re-run the tests, they should pass now.
 
-### 4.3.6 - Test 6: should fail to start another battle while in a pending battle
+### 4.3.6 - Test 6: should fail to start another battle while in a pending battle:
 
 Only one battle can happen at a time so if a user can start another battle while in the middle of a pending battle, we run the risk of a user battling themselves.
 
@@ -1483,67 +1532,69 @@ One final thing before we close the curtains here, the `startBattle` function is
 // contracts/AvatarArena.sol
 
 ...
-	function startBattle(uint256 tokenId) external {
-    	require(
-        	this.ownerOf(tokenId) == msg.sender,
-        	"Arena: Cannot start battle with non-owned token"
-    	);
 
-    	// skip placeholder battle
-    	if (_battles.length > 1) {
-        	uint256 currentBattleIndex = _battles.length - 1;
+// Function to start a battle with a given token ID
+function startBattle(uint256 tokenId) external {
+    require(
+        this.ownerOf(tokenId) == msg.sender,
+        "Arena: Cannot start battle with non-owned token"
+    );
 
-        	if (
-            	_battles[currentBattleIndex].players.length == 1 &&
-            	_battles[currentBattleIndex].players[0].player == msg.sender
-        	) {
-            	revert("Arena: Cannot start another battle while in a pending battle");
-        	}
+    // Skip placeholder battle
+    if (_battles.length > 1) {
+        uint256 currentBattleIndex = _battles.length - 1;
 
-        	if (_battles[currentBattleIndex].players.length == 1) {
-            	_joinExistingBattle(tokenId, currentBattleIndex);
+        // Check if sender is already in a pending battle
+        if (
+            _battles[currentBattleIndex].players.length == 1 &&
+            _battles[currentBattleIndex].players[0].player == msg.sender
+        ) {
+            revert("Arena: Cannot start another battle while in a pending battle");
+        }
 
-            	return;
-        	}
-    	}
+        // Join existing battle if only one player is present
+        if (_battles[currentBattleIndex].players.length == 1) {
+            _joinExistingBattle(tokenId, currentBattleIndex);
+            return;
+        }
+    }
 
-    	_createNewBattle(tokenId);
-	}
-...
-
-...
-    	_avatarWins[winningNft] += 1;
-
-    	emit BattleComplete(_battleIndex);
-	}
-
-	function _createNewBattle(uint256 tokenId) internal {
-    	Battle storage newBattle = _battles.push();
-
-    	newBattle.players.push(Player(msg.sender, tokenId));
-    	newBattle.createdAt = block.timestamp;
-    	newBattle.winner = -1;
-
-    	_userBattles[msg.sender] = _battles.length - 1;
-	}
-
-	function _joinExistingBattle(uint256 tokenId, uint256 battleIndex) internal {
-    	_battles[battleIndex].players.push(Player(msg.sender, tokenId));
-    	_userBattles[msg.sender] = battleIndex;
-
-    	_simulateBattle(battleIndex);
-	}
+    _createNewBattle(tokenId);
 }
+
+...
+
+// Function to create a new battle with the given token ID
+function _createNewBattle(uint256 tokenId) internal {
+    Battle storage newBattle = _battles.push();
+
+    newBattle.players.push(Player(msg.sender, tokenId));
+    newBattle.createdAt = block.timestamp;
+    newBattle.winner = -1;
+
+    _userBattles[msg.sender] = _battles.length - 1;
+}
+
+// Function to join an existing battle with the given token ID and battle index
+function _joinExistingBattle(uint256 tokenId, uint256 battleIndex) internal {
+    _battles[battleIndex].players.push(Player(msg.sender, tokenId));
+    _userBattles[msg.sender] = battleIndex;
+
+    _simulateBattle(battleIndex);
+}
+
+...
 
 contract AvatarArena is ERC721Enumerable, ERC721URIStorage, Ownable, Arena {
 ...
+
 ```
 
 The tests should still pass, re-run them to be sure.
 
-### 4.4. Contract deployment
+### 4.4. Contract deployment:
 
-We're almost there, to deploy our smart contract to the Celo blockchain programmatically, we need to get the secret recovery phrase for our account from Metamask. This is used in generating our private key which is in turn used in signing transactions on the blockchain. (Therefore it goes without saying that you should keep the recovery phrase hidden and _not_ push it to GitHub)
+We're almost there, to deploy our smart contract to the Celo blockchain programmatically, we need to get the secret recovery phrase for our account from Metamask. This is used in generating our private key which is in turn used in signing transactions on the blockchain. (Therefore, it goes without saying that you should keep the recovery phrase hidden and _not_ push it to GitHub)
 
 We need to add the Celo Alfajores test network to our Metamask wallet, [here's a simple guide on that](https://docs.celo.org/blog/tutorials/3-simple-steps-to-connect-your-metamask-wallet-to-celo).
 
@@ -1582,7 +1633,7 @@ module.exports = {
 };
 ```
 
-Two main things are happening here:
+2 main things are happening here:
 
 1. We use `dotenv` to load the contents of our `.env` file as environmental variables.
 2. We configure the `alfajores` network (a Celo testnet) in our hardhat config, the `accounts.path` value is unique to Metamask, each wallet application has its own derivation path, for example, if you were using the CeloExtensionWallet the path would be: "m/44'/52752'/0'/0", etc
@@ -1672,11 +1723,11 @@ AvatarArena deployed to: 0xA28858B06EB2747909D257D01BffbE53C6B4f521
 Done in 14.93s.
 ```
 
-And we have lift-off!!
+And, we have lift-off!!
 
 That was great, we've deployed our game on the Alfajores test network, and now we need to build the frontend web app for the game.
 
-### 4.5. Frontend: Setup
+### 4.5. Frontend: Setup:
 
 Our frontend will be a React + [ChakraUI](https://v1.chakra-ui.com/) webapp. Let's go.
 
@@ -1769,7 +1820,7 @@ ReactDOM.render(
 reportWebVitals();
 ```
 
-Run
+Run:
 
 ```
 cd frontend
@@ -1906,11 +1957,11 @@ Also, let's not forget to [get the font from google](https://fonts.google.com/sp
 ...
 ```
 
-### 4.6. Frontend: Laying Bricks - Building components
+### 4.6. Frontend: Laying Bricks - Building components:
 
 Apologies friends, we won't be using the TDD approach here. The TDD focus was in building the contract, the goal here is to get a nice interface to interact with the contract. Now, I already went through the trouble of hitting my head while figuring things out so we now have the luxury of going through each piece of the frontend as we assemble them, I'll do my best to explain what's going on in each component and we'll keep things moving. Si?
 
-### 4.6.1 - Utilities
+### 4.6.1 - Utilities:
 
 Let's create two files in the utils directory - `frontend/src/utils`:
 
@@ -2157,7 +2208,7 @@ We'll use web3storage for storing our NFT data on IPFS and axios for making API 
 When you've gotten your API token, add it to the `frontend/.env` file:
 `REACT_APP_STORAGE_API_KEY=your API token`
 
-### 4.6.2 - Contracts
+### 4.6.2 - Contracts:
 
 You already know about the contracts directory (`frontend/src/contracts`) from the contract deployment step.
 
@@ -2167,7 +2218,7 @@ frontend/src/contracts/
 └── AvatarArena.json
 ```
 
-### 4.6.3 - Hooks
+### 4.6.3 - Hooks:
 
 We'll create a few hooks that we'll be needing. Let's create the files:
 
@@ -2247,9 +2298,9 @@ export const useBalance = () => {
 
 Great! Now the components.
 
-### 4.6.4 - Components
+### 4.6.4 - Components:
 
-Let's create the files
+Let's create the files:
 
 ```
 mkdir frontend/src/components
@@ -3193,7 +3244,7 @@ Phew! That was a lot, I know but it had to be done.
 
 We're almost there, bear with me.
 
-### 4.6.5 - Routes
+### 4.6.5 - Routes:
 
 The routes represent individual pages in the web application, we'll put the components together like lego bricks here. Let's create the files:
 
@@ -3559,7 +3610,7 @@ Let's update `frontend/src/App.css`, replace its content with this snippet:
 
 ![Battle Image] - (./images/avatar-arena-battle-result.png)
 
-## 5. Conclusion
+## 5. Conclusion:
 
 Well done! Congratulations for completing the tutorial, in this tutorial, we covered:
 
@@ -3571,19 +3622,17 @@ Well done! Congratulations for completing the tutorial, in this tutorial, we cov
 
 Check out a deployed version of the webapp [here!](https://avatar-arena.netlify.app)
 
-## 6. Next Steps
+## 6. Next Steps:
 
 If you enjoyed this, there's so much you can do; you could add more functionality to both the smart contract and the frontend still following the TDD process, deploy your own version to the CELO mainnet, explore other testing environments, you could even try adding test to some public contract code to beef up your understanding of both the contracts and the TDD process.
 
-## 7. About the author
+## 7. About the author:
 
 Bolarinwa Owuogba is a software engineer and a student of the University of Lagos, Nigeria. You'll find him [here on twitter](www.twitter.com/__rinwa), feel free to say hi.
 
-## 8. References
+## 8. References:
 
 - This article was inspired by [this dacade tutorial](https://dacade.org/communities/celo/courses/celo-201/)
 - [Solidity cheatsheet](https://docs.soliditylang.org/en/v0.8.9/cheatsheet.html)
 
-Thank you and goodbye!
-
----
+Thank you and goodbye!!
